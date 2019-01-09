@@ -1,0 +1,99 @@
+      PROGRAM HELLO_WORLD
+      IMPLICIT NONE
+C
+      INTEGER STAT1
+      INTEGER STAT2
+      CHARACTER*15 INPUT1
+      CHARACTER*25 INPUT2
+      CHARACTER*15 NAME1
+
+      CHARACTER*15 NAME2
+      INTEGER PROB
+      CHARACTER*19 OUTCOME
+      INTEGER SCORE
+C
+      CALL GETARG(1,INPUT1)
+      CALL GETARG(2,INPUT2)
+
+      OPEN(1,FILE=INPUT1)
+      OPEN(2,FILE=INPUT2)
+
+      CALL READ_TEAM(STAT1,STAT2,NAME1)
+      PRINT *,("--------END-----------")
+C      CALL READ_SUBMIT(NAME2,PROB,OUTCOME,SCORE)
+      CLOSE(1)
+      CLOSE(2)
+      STOP
+      END PROGRAM HELLO_WORLD
+
+
+c   -------------read_team----------------------
+      SUBROUTINE READ_TEAM(STAT1,STAT2,NAME1)
+      INTEGER STAT1
+      INTEGER STAT2
+      CHARACTER*15 NAME1
+
+      CHARACTER*15 NAME2
+      INTEGER PROB
+      CHARACTER*19 OUTCOME
+      INTEGER SCORE
+
+ 20   IF (STAT1 >= 0)THEN
+        READ(1,*,IOSTAT=STAT1) NAME1
+c        write(*,*) stat1
+        IF (STAT1>=0) THEN
+          WRITE(*,*) NAME1
+          PRINT *, "---------------------"
+          CALL READ_SUBMIT(STAT1,STAT2,NAME1,NAME2,PROB,OUTCOME,SCORE)
+        END IF
+        GOTO 20
+      END IF
+      RETURN
+      END
+c    ---------------------------------
+
+
+
+c    ------------read_submit--------------------
+      SUBROUTINE READ_SUBMIT(STAT1,STAT2,NAME1,NAME2,PROB,OUTCOME,SCORE)
+      INTEGER STAT1
+      INTEGER STAT2
+      CHARACTER*15 NAME1
+      CHARACTER*15 NAME2
+      INTEGER PROB
+      CHARACTER*19 OUTCOME
+      INTEGER SCORE
+ 21   IF (STAT2 >= 0 )THEN
+        READ(2,30,IOSTAT=STAT2) NAME2, PROB, OUTCOME, SCORE
+c        WRITE(*,*) STAT2
+        IF (STAT2>=0 ) THEN
+          WRITE(*,31)NAME2,PROB,OUTCOME,SCORE
+          CALL COMPARE_TWO_NAMES(STAT1,STAT2,NAME1,NAME2)
+        END IF
+        GOTO 21
+      END IF
+ 30   FORMAT (A15, I1, A19, I3)
+ 31   FORMAT (A,X,I1,X,A,X,I3)
+      RETURN
+      END
+
+c   -------------------------------
+
+
+
+      SUBROUTINE COMPARE_TWO_NAMES(STAT1,STAT2,NAME1,NAME2)
+      INTEGER STAT1
+      INTEGER STAT2
+      CHARACTER*15 NAME1
+      CHARACTER*15 NAME2
+
+      IF (NAME1 .EQ. NAME2) THEN
+        PRINT *,"SAME"
+      END IF
+
+      IF ((NAME1) .NE. (NAME2)) THEN
+        PRINT *,"NOT SAME"
+        CALL READ_TEAM(STAT1,STAT2,NAME1)
+      END IF
+      RETURN
+      END
